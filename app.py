@@ -4,7 +4,6 @@ from pathlib import Path
 import streamlit as st
 import language_tool_python
 from faster_whisper import WhisperModel
-from audiorecorder import audiorecorder
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.pagesizes import A4
@@ -126,18 +125,23 @@ if mode == "Writing":
 # =========================
 # SPEAKING MODE (Browser Recording)
 # =========================
+# =========================
+# SPEAKING MODE (Cloud-safe)
+# =========================
 else:
 
     st.subheader("Record your voice")
 
-    audio = audiorecorder("Click to record", "Click to stop")
+    audio_file = st.audio_input("Click to record")
 
-    if len(audio) > 0:
+    if audio_file is not None:
 
         wav_path = AUDIO_DIR / "recorded.wav"
-        audio.export(wav_path, format="wav")
 
-        st.audio(wav_path)
+        with open(wav_path, "wb") as f:
+            f.write(audio_file.getvalue())
+
+        st.audio(audio_file)
 
         with st.spinner("Transcribing..."):
             model = get_whisper()
@@ -159,6 +163,7 @@ else:
             st.success("No major issues detected.")
 
         pdf_name = f"speaking_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+
         pdf_path = generate_pdf(
             pdf_name,
             "Speaking Evaluation Report",
@@ -176,3 +181,4 @@ else:
 
         with open(pdf_path, "rb") as f:
             st.download_button("Download PDF Report", f, file_name=pdf_name)
+
