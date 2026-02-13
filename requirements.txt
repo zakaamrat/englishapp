@@ -1,7 +1,11 @@
 streamlit
-language-tool-python
+textblob
+pyspellchecker
 faster-whisper
 reportlab
+soundfile
+
+
 
 
 
