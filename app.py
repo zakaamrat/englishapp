@@ -117,7 +117,26 @@ if mode == "Writing":
 # Speaking Mode (Upload-based)
 # =========================
 else:
-    uploaded_audio = st.file_uploader("Upload WAV file", type=["wav"])
+    from audiorecorder import audiorecorder
+
+st.subheader("Record your voice")
+
+audio = audiorecorder("Click to record", "Click to stop")
+
+if len(audio) > 0:
+    wav_path = AUDIO_DIR / "recorded.wav"
+    audio.export(wav_path, format="wav")
+
+    st.audio(wav_path)
+
+    with st.spinner("Transcribing..."):
+        model = get_whisper()
+        segments, info = model.transcribe(str(wav_path))
+        transcript = " ".join([seg.text for seg in segments])
+
+    st.write("Transcript:")
+    st.write(transcript)
+    #uploaded_audio = st.file_uploader("Upload WAV file", type=["wav"])
 
     if uploaded_audio is not None:
         wav_path = AUDIO_DIR / uploaded_audio.name
@@ -149,3 +168,4 @@ else:
         with open(pdf_path, "rb") as f:
 
             st.download_button("Download PDF Report", f, file_name=pdf_name)
+
