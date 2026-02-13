@@ -22,7 +22,7 @@ AUDIO_DIR.mkdir(exist_ok=True)
 # =========================
 @st.cache_resource
 def get_lang_tool():
-    return language_tool_python.LanguageTool("en-US")  # Local server mode
+    return language_tool_python.LanguageToolPublicAPI("en-US")
 
 @st.cache_resource
 def get_whisper():
@@ -181,4 +181,5 @@ else:
 
         with open(pdf_path, "rb") as f:
             st.download_button("Download PDF Report", f, file_name=pdf_name)
+
 
