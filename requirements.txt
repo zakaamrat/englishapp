@@ -1,6 +1,7 @@
 streamlit
 language-tool-python
 faster-whisper
-streamlit-audiorecorder
 reportlab
+
+
 
