@@ -114,36 +114,20 @@ if mode == "Writing":
             st.download_button("Download PDF Report", f, file_name=pdf_name)
 
 # =========================
-# Speaking Mode (Upload-based)
+# SPEAKING MODE (Browser Recording)
 # =========================
 else:
-    from audiorecorder import audiorecorder
 
-st.subheader("Record your voice")
+    st.subheader("Record your voice")
 
-audio = audiorecorder("Click to record", "Click to stop")
+    audio = audiorecorder("Click to record", "Click to stop")
 
-if len(audio) > 0:
-    wav_path = AUDIO_DIR / "recorded.wav"
-    audio.export(wav_path, format="wav")
+    if len(audio) > 0:
 
-    st.audio(wav_path)
+        wav_path = AUDIO_DIR / "recorded.wav"
+        audio.export(wav_path, format="wav")
 
-    with st.spinner("Transcribing..."):
-        model = get_whisper()
-        segments, info = model.transcribe(str(wav_path))
-        transcript = " ".join([seg.text for seg in segments])
-
-    st.write("Transcript:")
-    st.write(transcript)
-    #uploaded_audio = st.file_uploader("Upload WAV file", type=["wav"])
-
-    if uploaded_audio is not None:
-        wav_path = AUDIO_DIR / uploaded_audio.name
-        with open(wav_path, "wb") as f:
-            f.write(uploaded_audio.read())
-
-        st.audio(str(wav_path))
+        st.audio(wav_path)
 
         with st.spinner("Transcribing..."):
             model = get_whisper()
@@ -158,14 +142,27 @@ if len(audio) > 0:
         st.subheader("Corrected Transcript")
         st.write(corrected)
 
+        if issues:
+            st.subheader("Detected Issues")
+            st.dataframe(issues, use_container_width=True)
+        else:
+            st.success("No major issues detected.")
+
         pdf_name = f"speaking_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         pdf_path = generate_pdf(
             pdf_name,
             "Speaking Evaluation Report",
-            [f"Student: {name}", f"Email: {email}", "", "Transcript:", transcript, "", "Corrected:", corrected]
+            [
+                f"Student: {name}",
+                f"Email: {email}",
+                "",
+                "Transcript:",
+                transcript,
+                "",
+                "Corrected Version:",
+                corrected
+            ]
         )
 
         with open(pdf_path, "rb") as f:
-
             st.download_button("Download PDF Report", f, file_name=pdf_name)
-
