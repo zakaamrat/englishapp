@@ -1,20 +1,16 @@
-import os
 import re
 from datetime import datetime
 from pathlib import Path
-import numpy as np
 import streamlit as st
-import soundfile as sf
 import language_tool_python
-from reportlab.lib.pagesizes import A4
+from faster_whisper import WhisperModel
+from audiorecorder import audiorecorder
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib import colors
-from reportlab.lib.units import cm
-from faster_whisper import WhisperModel
+from reportlab.lib.pagesizes import A4
 
 # =========================
-# Paths (Cloud-safe)
+# Cloud-safe directories
 # =========================
 BASE_DIR = Path.cwd()
 REPORT_DIR = BASE_DIR / "reports"
@@ -23,12 +19,11 @@ REPORT_DIR.mkdir(exist_ok=True)
 AUDIO_DIR.mkdir(exist_ok=True)
 
 # =========================
-# Cached Resources
+# Cached resources
 # =========================
 @st.cache_resource
 def get_lang_tool():
-    # Public API mode (NO Java needed)
-   return language_tool_python.LanguageTool("en-US")
+    return language_tool_python.LanguageTool("en-US")  # Local server mode
 
 @st.cache_resource
 def get_whisper():
@@ -49,13 +44,12 @@ def analyze_text(text):
             "Suggestion": m.replacements[0] if m.replacements else "",
             "Context": text[max(0, m.offset-30):m.offset+m.errorLength+30]
         })
-
     return corrected, issues
 
 # =========================
-# PDF Generator (Cloud safe)
+# PDF Generator
 # =========================
-def generate_pdf(filename, title, content_lines):
+def generate_pdf(filename, title, lines):
     pdf_path = REPORT_DIR / filename
     doc = SimpleDocTemplate(str(pdf_path), pagesize=A4)
     elements = []
@@ -64,7 +58,7 @@ def generate_pdf(filename, title, content_lines):
     elements.append(Paragraph(f"<b>{title}</b>", style))
     elements.append(Spacer(1, 12))
 
-    for line in content_lines:
+    for line in lines:
         elements.append(Paragraph(line, style))
         elements.append(Spacer(1, 6))
 
@@ -72,26 +66,33 @@ def generate_pdf(filename, title, content_lines):
     return pdf_path
 
 # =========================
-# Streamlit UI
+# UI
 # =========================
 st.set_page_config(page_title="English Evaluator", layout="wide")
 st.title("English Writing & Speaking Evaluator")
 
-mode = st.radio("Choose Mode", ["Writing", "Speaking"])
+mode = st.radio("Select Mode", ["Writing", "Speaking"])
 
 name = st.text_input("Student Name")
 email = st.text_input("Email")
 
 if not name or not email:
+    st.warning("Please enter your name and email.")
     st.stop()
 
 # =========================
-# Writing Mode
+# WRITING MODE
 # =========================
 if mode == "Writing":
+
     text = st.text_area("Enter your paragraph", height=200)
 
     if st.button("Evaluate Writing"):
+
+        if len(text.strip()) < 30:
+            st.error("Please write a longer paragraph.")
+            st.stop()
+
         corrected, issues = analyze_text(text)
 
         st.subheader("Corrected Version")
@@ -99,7 +100,7 @@ if mode == "Writing":
 
         st.subheader("Detected Issues")
         if issues:
-            st.dataframe(issues)
+            st.dataframe(issues, use_container_width=True)
         else:
             st.success("No major issues detected.")
 
@@ -107,7 +108,16 @@ if mode == "Writing":
         pdf_path = generate_pdf(
             pdf_name,
             "Writing Evaluation Report",
-            [f"Student: {name}", f"Email: {email}", "", "Corrected Text:", corrected]
+            [
+                f"Student: {name}",
+                f"Email: {email}",
+                "",
+                "Original Text:",
+                text,
+                "",
+                "Corrected Text:",
+                corrected
+            ]
         )
 
         with open(pdf_path, "rb") as f:
