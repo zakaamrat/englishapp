@@ -196,6 +196,36 @@ def recommendations_from_issues(issues):
 # =====================================================
 # UI
 # =====================================================
+st.markdown("""
+<style>
+.typing {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: #f1f3f6;
+  font-size: 14px;
+}
+.typing span {
+  height: 8px; width: 8px;
+  margin: 0 2px;
+  background-color: #888;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out both;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+</style>
+
+<div class="typing">🤖 Assistant is analyzing...
+  <span></span><span></span><span></span>
+</div>
+""", unsafe_allow_html=True)
+
 st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
 
 mode = st.radio("Select Evaluation Type", ["Writing Evaluation", "Speaking Evaluation"])
