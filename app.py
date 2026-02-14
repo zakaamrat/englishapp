@@ -264,17 +264,7 @@ if not name or not email:
 
 st.subheader("Prompt")
 st.write(prompt)
-col1, col2 = st.columns([2, 1])
 
-with col1:
-    st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
-
-with col2:
-    lottie = load_lottie_url("https://assets9.lottiefiles.com/packages/lf20_touohxv0.json")
-    if lottie:
-        st_lottie(lottie, height=180, key="bot")
-    else:
-        st.info("🤖 Chatbot assistant ready!")
 
 # =====================================================
 # WRITING
