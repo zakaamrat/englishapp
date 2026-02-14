@@ -5,3 +5,5 @@ pyspellchecker
 faster-whisper
 reportlab
 soundfile
+
+
