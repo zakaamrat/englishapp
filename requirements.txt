@@ -1,0 +1,5 @@
+streamlit
+pyspellchecker
+faster-whisper
+reportlab
+soundfile
