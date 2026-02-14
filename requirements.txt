@@ -1,4 +1,6 @@
 streamlit
+streamlit-lottie
+requests
 pyspellchecker
 faster-whisper
 reportlab
