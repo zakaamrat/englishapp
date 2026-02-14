@@ -248,13 +248,6 @@ with col2:
     else:
         st.info("🤖 Chatbot assistant ready!")
 
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    st.title("")
-
-with col2:
-    st.image("omani_avatar.png", width=220)
 st.title("Start Here")
 
 mode = st.radio("Select Evaluation Type", ["Writing Evaluation", "Speaking Evaluation"])
