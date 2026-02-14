@@ -239,7 +239,7 @@ st.markdown("""
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
+    st.title("English Writing & Speaking Evaluator (@aboumedyen@gmail.com)")
 
 with col2:
     lottie = load_lottie_url("https://assets9.lottiefiles.com/packages/lf20_touohxv0.json")
@@ -248,7 +248,7 @@ with col2:
     else:
         st.info("🤖 Chatbot assistant ready!")
 
-st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
+st.title("Start Here")
 
 mode = st.radio("Select Evaluation Type", ["Writing Evaluation", "Speaking Evaluation"])
 
