@@ -315,6 +315,17 @@ if mode == "Writing Evaluation":
 
         with open(pdf_path, "rb") as f:
             st.download_button("Download PDF Report", f, file_name=pdf_name, mime="application/pdf")
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
+
+with col2:
+    lottie = load_lottie_url("https://assets9.lottiefiles.com/packages/lf20_touohxv0.json")
+    if lottie:
+        st_lottie(lottie, height=180, key="bot")
+    else:
+        st.info("🤖 Chatbot assistant ready!")
 
 # =====================================================
 # SPEAKING (Upload audio)
