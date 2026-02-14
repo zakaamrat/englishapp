@@ -265,6 +265,13 @@ if not name or not email:
 st.subheader("Prompt")
 st.write(prompt)
 
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.title("")
+
+with col2:
+    st.image("omani_avatar.png", width=220)
 
 # =====================================================
 # WRITING
