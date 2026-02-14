@@ -8,6 +8,17 @@ from faster_whisper import WhisperModel
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.pagesizes import A4
+import requests
+from streamlit_lottie import st_lottie
+
+def load_lottie_url(url: str):
+    try:
+        r = requests.get(url, timeout=10)
+        if r.status_code != 200:
+            return None
+        return r.json()
+    except Exception:
+        return None
 
 # =====================================================
 # CONFIG
@@ -225,6 +236,17 @@ st.markdown("""
   <span></span><span></span><span></span>
 </div>
 """, unsafe_allow_html=True)
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
+
+with col2:
+    lottie = load_lottie_url("https://assets9.lottiefiles.com/packages/lf20_touohxv0.json")
+    if lottie:
+        st_lottie(lottie, height=180, key="bot")
+    else:
+        st.info("🤖 Chatbot assistant ready!")
 
 st.title("English Writing & Speaking Evaluator (Cloud-Safe)")
 
